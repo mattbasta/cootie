@@ -3,8 +3,6 @@ var path = require('path');
 
 var bouncy = require('bouncy');
 var forever = require('forever');
-var forever_monitor = require('forever-monitor');
-var nconf = require('nconf');
 
 var cootie = {};
 
