@@ -1,0 +1,15 @@
+#!/usr/bin/env node
+
+var cootie = require('../src/cootie');
+
+var argv = process.argv;
+if (argv[2] === 'add') {
+    cootie.addApp({
+        script: argv[3],
+        port: argv[4],
+        hosts: argv.slice(5)
+    });
+} else {
+    cootie.start();
+}
+

@@ -1,0 +1,29 @@
+{
+  "name": "cootie",
+  "version": "0.0.1",
+  "description": "A simple multi-application manager for VPSs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mattbasta/cootie.git"
+  },
+  "keywords": [
+    "cootie",
+    "server",
+    "routing",
+    "daemon"
+  ],
+  "author": "Matt Basta <me@mattbasta.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mattbasta/cootie/issues"
+  },
+  "dependencies": {
+    "bouncy": "~3.2.1",
+    "forever-monitor": "~1.2.3",
+    "nconf": "~0.6.8"
+  }
+}
