@@ -3,6 +3,7 @@ var path = require('path');
 
 var bouncy = require('bouncy');
 var forever = require('forever');
+var utile = require('utile');
 
 var cootie = {};
 
@@ -24,11 +25,14 @@ var hosts = {};
 var instances = [];
 
 function startApp(app) {
+    var uid = utile.randomString(4).replace(/^\-/, '_');
     var instance = forever.startDaemon([app.script], {
         silent: true,
         env: {PORT: app.port},
-        cwd: path.dirname(app.script)
+        cwd: path.dirname(app.script),
+        uid: uid
     });
+    instance.uid = uid;
     instance.app = app;
     for (var i = 0, host; host = app.hosts[i++];) {
         hosts[host] = app.port;
@@ -57,6 +61,12 @@ cootie.start = function start() {
     });
     server.listen(cootie.config['port'] || 80);
     console.log('Server started.');
+
+    process.on('exit', function() {
+        for (var i = 0; i < instances.length; i++) {
+            forever.stop(instances[i].uid);
+        }
+    });
 };
 
 cootie.addApp = function addApp(app) {

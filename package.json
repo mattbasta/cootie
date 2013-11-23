@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "bouncy": "~3.2.1",
-    "forever": "~0.10.9"
+    "forever": "~0.10.9",
+    "utile": "~0.2.0"
   }
 }
