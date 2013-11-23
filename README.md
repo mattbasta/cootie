@@ -12,7 +12,7 @@ Cootie allows you to manage all of your applications centrally:
 cd /opt
 git clone git@github.com:mattbasta/mygreatwebsite.git
 
-# cootie add [path to server] [port] [hostname[, hostname ...]]
+# cootie add [path to server] [port] [hostname[ hostname [...]]]
 cootie add /opt/mygreatwebsite/app.js 8001 greatsite.biz
 
 # If you've never run Cootie before
