@@ -23,6 +23,13 @@ forever restartall
 ```
 
 
+## Why?
+
+- You're a simple man like myself.
+- You don't want to deal with configuring nginx.
+- You want to be able to set up a server with only Node.
+
+
 ## Things Cootie is not
 
 - **A replacement for nginx.** Cootie isn't built for speed.
@@ -30,4 +37,4 @@ forever restartall
   production website.
 - **Magic.** Cootie wraps multiple libraries and supplies much of the glue code
   for building a stable platform. Cootie does little more than that.
-
+- **PaaS.** Cootie does no setup, teardown, or sandboxing of apps. 
