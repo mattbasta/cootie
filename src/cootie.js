@@ -5,6 +5,8 @@ var bouncy = require('bouncy');
 var forever = require('forever');
 var utile = require('utile');
 
+var utils = require('./utils');
+
 var cootie = {};
 
 cootie.root = path.join(process.env.HOME || process.env.USERPROFILE || '/root', '.cootie');
@@ -26,22 +28,26 @@ var instances = [];
 
 function startApp(app) {
     var uid = utile.randomString(4).replace(/^\-/, '_');
-    var instance = forever.startDaemon([app.script], {
-        silent: true,
-        env: {PORT: app.port},
-        cwd: path.dirname(app.script),
-        uid: uid
-    });
-    instance.uid = uid;
-    instance.app = app;
-    for (var i = 0, host; host = app.hosts[i++];) {
-        hosts[host] = app.port;
-    }
+    utils.getPort(app.port, _start);
 
-    instance.on('exit', function() {
-        console.warn('Script has exited: ' + app.script);
-    });
-    instances.push(instance);
+    function _start(port) {
+        var instance = forever.startDaemon([app.script], {
+            silent: true,
+            env: {PORT: port},
+            cwd: path.dirname(app.script),
+            uid: uid
+        });
+        instance.uid = uid;
+        instance.app = app;
+        for (var i = 0, host; host = app.hosts[i++];) {
+            hosts[host] = port;
+        }
+
+        instance.on('exit', function() {
+            console.warn('Script has exited: ' + app.script);
+        });
+        instances.push(instance);
+    }
 }
 
 cootie.start = function start() {

@@ -15,10 +15,19 @@ if (argv[2] === 'add') {
         console.error('Could not resolve path: ' + script);
         process.exit(1);
     }
+
+    var port = parseInt(argv[4], 10);
+    var hostsStart = 5;
+    if (isNaN(port)) {
+        console.log('Using auto-detected port number');
+        port = null;
+        hostsStart = 4;
+    }
+
     cootie.addApp({
         script: script,
-        port: argv[4],
-        hosts: argv.slice(5)
+        port: port,
+        hosts: argv.slice(hostsStart)
     });
 } else {
     cootie.start();
