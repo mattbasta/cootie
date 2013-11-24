@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 
+var async = require('async');
 var bouncy = require('bouncy');
 var forever = require('forever');
 var utile = require('utile');
@@ -26,8 +27,9 @@ if (fs.existsSync(cootie.config_file)) {
 var hosts = {};
 var instances = [];
 
-function startApp(app) {
+function startApp(app, cb) {
     var uid = utile.randomString(4).replace(/^\-/, '_');
+    console.log('Starting app ' + app.script + ' with uid ' + uid);
     utils.getPort(app.port, _start);
 
     function _start(port) {
@@ -47,32 +49,32 @@ function startApp(app) {
             console.warn('Script has exited: ' + app.script);
         });
         instances.push(instance);
+        cb();
     }
 }
 
 cootie.start = function start() {
     var apps = cootie.config['apps'] || [];
-    for (var i = 0, app; app = apps[i++];) {
-        console.log('Starting app ' + app.script);
-        startApp(app);
+    async.eachSeries(apps, startApp, _daemon);
+
+    function _daemon() {
+        var server = bouncy(function(req, res, bounce) {
+            if (req.headers.host in hosts) {
+                bounce(hosts[req.headers.host]);
+                return;
+            }
+            res.statusCode = 404;
+            res.end('Hostname could not be resolved.');
+        });
+        server.listen(cootie.config['port'] || 80);
+        console.log('Server started.');
+
+        process.on('exit', function() {
+            for (var i = 0; i < instances.length; i++) {
+                forever.stop(instances[i].uid);
+            }
+        });
     }
-
-    var server = bouncy(function(req, res, bounce) {
-        if (req.headers.host in hosts) {
-            bounce(hosts[req.headers.host]);
-            return;
-        }
-        res.statusCode = 404;
-        res.end('Hostname could not be resolved.');
-    });
-    server.listen(cootie.config['port'] || 80);
-    console.log('Server started.');
-
-    process.on('exit', function() {
-        for (var i = 0; i < instances.length; i++) {
-            forever.stop(instances[i].uid);
-        }
-    });
 };
 
 cootie.addApp = function addApp(app) {
