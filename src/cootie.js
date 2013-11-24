@@ -2,10 +2,10 @@ var fs = require('fs');
 var path = require('path');
 
 var async = require('async');
-var bouncy = require('bouncy');
 var forever = require('forever');
 var utile = require('utile');
 
+var proxy = require('./proxy');
 var utils = require('./utils');
 
 var cootie = {};
@@ -56,26 +56,26 @@ function startApp(app, cb) {
 cootie.start = function start() {
     var apps = cootie.config['apps'] || [];
     async.eachSeries(apps, startApp, _daemon);
+};
 
-    function _daemon() {
-        var server = bouncy(function(req, res, bounce) {
-            if (req.headers.host in hosts) {
-                bounce(hosts[req.headers.host]);
-                return;
-            }
+function _daemon() {
+    var server = proxy.startServer(function(req, res) {
+        if (!(req.headers.host in hosts)) {
             res.statusCode = 404;
             res.end('Hostname could not be resolved.');
-        });
-        server.listen(cootie.config['port'] || 80);
-        console.log('Server started.');
+            return 0;
+        }
+        return hosts[req.headers.host];
+    }, {port: cootie.config['port'] || 80});
+    console.log('Server started.');
 
-        process.on('exit', function() {
-            for (var i = 0; i < instances.length; i++) {
-                forever.stop(instances[i].uid);
-            }
-        });
-    }
-};
+    process.on('exit', function() {
+        server.close();
+        for (var i = 0; i < instances.length; i++) {
+            forever.stop(instances[i].uid);
+        }
+    });
+}
 
 cootie.addApp = function addApp(app) {
     var apps = cootie.config['apps'] || [];

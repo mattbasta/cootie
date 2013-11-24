@@ -19,9 +19,9 @@
     "url": "https://github.com/mattbasta/cootie/issues"
   },
   "dependencies": {
-    "bouncy": "~3.2.1",
     "forever": "~0.10.9",
     "utile": "~0.2.0",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "through": "~2.3.4"
   }
 }

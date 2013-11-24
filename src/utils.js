@@ -9,10 +9,7 @@ function testPort(port, cb) {
             cb(true);
         });
         server.on('error', function(err) {
-            server.close();
-            if (err.code === 'EADDRINUSE') {
-                cb(false);
-            }
+            cb(false);
         });
         server.listen(port, '127.0.0.1', 1, function() {
             server.close();
