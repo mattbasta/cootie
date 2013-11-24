@@ -1,11 +1,22 @@
 #!/usr/bin/env node
 
+var fs = require('fs');
+var path = require('path');
+
 var cootie = require('../src/cootie');
 
 var argv = process.argv;
 if (argv[2] === 'add') {
+    var script = argv[3];
+    if (script[0] !== '/') {
+        script = path.resolve(process.cwd(), script);
+    }
+    if (!fs.existsSync(script)) {
+        console.error('Could not resolve path: ' + script);
+        process.exit(1);
+    }
     cootie.addApp({
-        script: argv[3],
+        script: script,
         port: argv[4],
         hosts: argv.slice(5)
     });
